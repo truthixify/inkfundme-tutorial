@@ -2,8 +2,6 @@
 title: Building a Crowdfunding dApp with ink! Smart Contracts and PAPI/ReactiveDOT
 ---
 
-<!-- ![Crowdfunding Title Picture](/frontend/public/inkfundme.png) -->
-
 # Building a Crowdfunding dApp with ink! Smart Contracts and PAPI/ReactiveDOT
 
 Hey there! Ready to build something awesome? In this tutorial, we'll create a decentralized crowdfunding platform from scratch using ink! smart contracts and a modern React frontend. Think of this as us coding together - I'll walk you through each step, explain the important decisions, and make sure you understand both the how and the why.
@@ -480,7 +478,7 @@ export const FAUCET_URLS: { [key: string]: string } = {
 
 // Replace these with your deployed contract addresses
 export const TOKEN_ADDRESS = "0x1f92b64f3e344dfd020ccd287e39a660ba329262"
-export const INK_FUND_ME_ADDRESS = "0xca1b92ff69afe515131c5a4ce8c4066db2f418db"
+export const INK_FUND_ME_ADDRESS = "0xa89c351e2ddd04cdc65aaed75b4dea5f1c0be279"
 ```
 
 **Getting Contract Addresses**:
@@ -527,19 +525,13 @@ createRoot(document.getElementById("root")!).render(
 
 ### 2. Contract Interaction Hooks
 
-Create custom hooks for contract interactions:
+The project includes several custom hooks for seamless contract interactions. Here are the key ones:
 
+**Account Mapping Hook (`use-is-mapped.tsx`):**
 ```typescript
-// frontend/src/hooks/use-is-mapped.ts
-import { ss58ToEthereum } from "@polkadot-api/sdk-ink"
-import { useTypedApi } from "@reactive-dot/react"
-import { useCallback, useEffect, useState } from "react"
-import { useSignerAndAddress } from "./use-signer-and-address"
-
 export function useIsMapped() {
     const api = useTypedApi()
     const { signerAddress } = useSignerAndAddress()
-
     const [isMapped, setIsMapped] = useState<boolean>()
 
     const updateIsMapped = useCallback(async () => {
@@ -549,32 +541,22 @@ export function useIsMapped() {
         }
 
         const evmSignerAddress = ss58ToEthereum(signerAddress)
-        const isMapped = !!(await api.query.Revive.OriginalAccount.getValue(evmSignerAddress))
-
+        const isMapped = !!(await (api.query.Revive as any).OriginalAccount.getValue(
+            evmSignerAddress
+        ))
         setIsMapped(isMapped)
     }, [api, signerAddress])
-
-    useEffect(() => {
-        updateIsMapped()
-    }, [updateIsMapped])
 
     return isMapped
 }
 ```
 
+**Signer Hook (`use-signer-and-address.tsx`):**
 ```typescript
-// frontend/src/hooks/use-signer-and-address.ts
-import { useSigner } from "@reactive-dot/react"
-import { AccountId } from "polkadot-api"
-import type { Signer } from "../lib/types"
-
-export function useSignerAndAddress():
-    | { signer: Signer; signerAddress: string }
-    | { signer?: never; signerAddress?: never } {
+export function useSignerAndAddress() {
     const signer = useSigner()
     if (!signer?.publicKey) return {}
 
-    // Determine signer address from public key as `SignerProvider` does not provide it
     let signerAddress: string | undefined
     try {
         signerAddress = AccountId().dec(signer.publicKey)
@@ -583,12 +565,11 @@ export function useSignerAndAddress():
         return {}
     }
 
-    return {
-        signer,
-        signerAddress,
-    }
+    return { signer, signerAddress }
 }
 ```
+
+> **Note**: These hooks handle the complex logic of wallet connection, address conversion, and account mapping status. Check the full implementations in `frontend/src/hooks/` for complete error handling and state management.
 
 ### 3. Campaign Card Component
 
@@ -978,7 +959,7 @@ npm install -g vercel
 
 # IMPORTANT: Navigate to the frontend directory first!
 cd frontend
-vercel
+vercel --prod
 
 # Follow the prompts:
 # - Link to existing project? No (for first deployment)
