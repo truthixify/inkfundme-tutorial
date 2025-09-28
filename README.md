@@ -1,21 +1,63 @@
-# InkFundMe Smart Contract
+# InkFundMe - Decentralized Crowdfunding Platform
 
-A decentralized crowdfunding platform built with ink! smart contracts on Substrate. InkFundMe allows users to create fundraising campaigns and accept contributions using ERC20 tokens.
+A complete decentralized crowdfunding platform built with ink! smart contracts and a modern React frontend. InkFundMe allows users to create fundraising campaigns, contribute to causes they care about, and manage funds transparently on the blockchain.
 
-## Features
+## 🚀 Live Demo
 
-- **ERC20 Token Integration**: Uses a custom ERC20 token for all transactions
+- **Frontend**: [https://inkfundme-tutorial.vercel.app](https://inkfundme-tutorial.vercel.app)
+- **Tutorial**: See [TUTORIAL.md](./TUTORIAL.md) for a complete step-by-step guide
+
+## ✨ Features
+
+### Smart Contract Features
+- **ERC20 Token Integration**: Custom INKFUNDME token for all transactions
 - **Campaign Management**: Create, fund, and finalize fundraising campaigns
-- **Faucet Functionality**: Free token minting for testing purposes
-- **Refund System**: Automatic refunds for failed campaigns
-- **Event Logging**: Comprehensive event system for tracking activities
+- **Faucet Functionality**: Free token minting for testing and onboarding
+- **Automatic Refund System**: Contributors get refunds if campaigns fail
+- **Transparent Event Logging**: All activities tracked on-chain
 
-## Contract Architecture
+### Frontend Features
+- **Modern React UI**: Built with Vite, TypeScript, and Tailwind CSS
+- **PAPI Integration**: Seamless blockchain interaction with Polkadot API
+- **ReactiveDOT**: Real-time updates and reactive state management
+- **Account Mapping**: Automatic SS58 to EVM address conversion
+- **Responsive Design**: Works perfectly on desktop and mobile
+- **Toast Notifications**: Real-time feedback for all user actions
+- **Loading States**: Comprehensive UX with loading indicators
 
-The InkFundMe system consists of two main contracts:
+## 🏗️ Project Structure
 
-1. **Token** (`token`): ERC20 token with minting capabilities
-2. **InkFundMe** (`inkfundme`): Main crowdfunding contract
+```
+inkfundme/
+├── contracts/                 # ink! Smart Contracts
+│   ├── src/
+│   │   ├── token/            # ERC20 token contract
+│   │   └── inkfundme/        # Main crowdfunding contract
+│   ├── Makefile              # Build and deployment scripts
+│   └── target/               # Compiled contracts
+├── frontend/                 # React Frontend
+│   ├── src/
+│   │   ├── components/       # UI components
+│   │   ├── hooks/           # Custom React hooks
+│   │   ├── pages/           # Route components
+│   │   └── lib/             # Utilities and contracts
+│   └── .papi/               # Generated PAPI descriptors
+└── TUTORIAL.md              # Complete tutorial guide
+```
+
+## 🔧 Architecture
+
+### Smart Contracts
+1. **Token Contract** (`contracts/src/token/`): ERC20 token with minting capabilities
+2. **InkFundMe Contract** (`contracts/src/inkfundme/`): Main crowdfunding logic
+
+### Frontend Stack
+- **React 19** with TypeScript for type safety
+- **Vite** for fast development and building
+- **PAPI** for blockchain interaction
+- **ReactiveDOT** for reactive state management
+- **Tailwind CSS** for styling
+- **shadcn/ui** for component library
 
 ## Contract Structures
 
@@ -149,78 +191,87 @@ The contract includes comprehensive error handling:
 - `TokenError`: ERC20 operation failed
 - `InvalidParameters`: Invalid input parameters
 
-## Deployment Guide
+## 🚀 Quick Start
 
-### 1. Deploy the ERC20 Token Contract
+### Prerequisites
+- [Rust & ink!](https://use.ink/docs/v6/)
+- [Node.js 18+](https://nodejs.org/)
+- [cargo-contract](https://github.com/use-ink/cargo-contract)
+- [Polkadot.js extension](https://polkadot.js.org/extension/)
 
-First, deploy the `InkFundMeToken` contract:
-
+### 1. Clone and Setup
 ```bash
-# Build the token contract
-cargo contract build --manifest-path src/token/Cargo.toml
-
-# Deploy with initial parameters
-# name: "InkFundMe Token"
-# symbol: "IFM" 
-# decimals: 18
-# initial_supply: 1000000 (1M tokens)
+git clone https://github.com/truthixify/inkfundme.git
+cd inkfundme
 ```
 
-### 2. Deploy the InkFundMe Contract
-
-Option A: Deploy with new token
+### 2. Deploy Smart Contracts
 ```bash
-# Build the main contract
-cargo contract build --manifest-path src/inkfundme/Cargo.toml
+cd contracts
 
-# Deploy with token supply parameter
-# token_total_supply: 1000000
+# Build contracts
+make build
+# OR: cargo contract build --manifest-path ./src/token/Cargo.toml
+#     cargo contract build --manifest-path ./src/inkfundme/Cargo.toml
+
+# Configure for Passet Hub testnet
+echo 'ACCOUNT_URI=your-seed-phrase' > .env
+echo 'CHAIN=wss://testnet-passet-hub.polkadot.io' >> .env
+
+# Deploy contracts
+make instantiate-token
+make instantiate-inkfundme
+# OR use the full cargo contract instantiate commands (see TUTORIAL.md)
 ```
 
-Option B: Deploy with existing token
+### 3. Setup Frontend
 ```bash
-# Deploy with existing token address
-# token_address: <deployed_token_address>
+cd frontend
+
+# Install dependencies
+npm install
+
+# Generate contract descriptors
+npm run codegen
+
+# Update contract addresses in src/lib/constants.ts
+# TOKEN_ADDRESS = "your-deployed-token-address"
+# INK_FUND_ME_ADDRESS = "your-deployed-inkfundme-address"
+
+# Start development server
+npm run dev
 ```
 
-## Usage Examples
-
-### 1. Get Free Tokens (Faucet)
-```rust
-// Anyone can call this to get free tokens for testing
-inkfundme.mint_faucet(user_address, 1000);
+### 4. Deploy to Vercel
+```bash
+cd frontend
+npm run build
+vercel
 ```
 
-### 2. Create a Campaign
-```rust
-let campaign_id = inkfundme.create_campaign(
-    "Save the Whales".to_string(),
-    "Help us protect whale habitats".to_string(),
-    10000, // Goal: 10,000 tokens
-    1735689600, // Deadline: Jan 1, 2025
-)?;
-```
+> **📖 For detailed instructions, see [TUTORIAL.md](./TUTORIAL.md)**
 
-### 3. Contribute to a Campaign
-```rust
-// First approve the InkFundMe contract to spend your tokens
-token.approve(inkfundme_address, 500)?;
+## 💡 How It Works
 
-// Then contribute
-inkfundme.contribute(campaign_id, 500)?;
-```
+### For Campaign Creators
+1. **Connect Wallet**: Use Polkadot.js extension
+2. **Map Account**: One-time setup for contract interaction
+3. **Create Campaign**: Set title, description, goal, and deadline
+4. **Share Campaign**: Get contributions from supporters
+5. **Finalize**: After deadline, claim funds if goal is met
 
-### 4. Finalize a Campaign
-```rust
-// After deadline passes, anyone can finalize
-inkfundme.finalize(campaign_id)?;
-```
+### For Contributors
+1. **Browse Campaigns**: Explore active fundraising campaigns
+2. **Get Test Tokens**: Use the built-in faucet for testing
+3. **Contribute**: Support campaigns you believe in
+4. **Track Progress**: See real-time funding progress
+5. **Get Refunds**: Automatic refunds if campaigns fail
 
-### 5. Claim Refund (if campaign failed)
-```rust
-// Contributors can claim refunds from failed campaigns
-inkfundme.claim_refund(campaign_id)?;
-```
+### Smart Contract Logic
+- **Success**: If goal is reached, funds go to campaign creator
+- **Failure**: If goal isn't reached, contributors can claim full refunds
+- **Transparency**: All transactions and events are recorded on-chain
+- **Security**: Built-in protections against common vulnerabilities
 
 ## Security Considerations
 
@@ -230,31 +281,58 @@ inkfundme.claim_refund(campaign_id)?;
 4. **Deadline Validation**: Ensures deadlines are in the future when creating campaigns
 5. **State Validation**: Comprehensive checks before state changes
 
-## Testing
+## 🧪 Testing
 
-The contract includes comprehensive unit tests covering:
-- Contract initialization
-- Campaign creation and validation
-- Error conditions
-- Edge cases
-
-Run tests with:
+### Smart Contract Tests
 ```bash
+cd contracts
 cargo test --manifest-path src/inkfundme/Cargo.toml
 cargo test --manifest-path src/token/Cargo.toml
 ```
 
-## Production Considerations
+### Frontend Testing
+```bash
+cd frontend
+npm run build  # Verify build works
+npm run preview  # Test production build locally
+```
 
-For production deployment, consider:
+## 🛠️ Development
 
-1. **Access Control**: Add owner/admin controls to the faucet function
-2. **Supply Caps**: Implement maximum supply limits for the token
-3. **Fee Structure**: Add platform fees for campaign creation or success
-4. **Governance**: Implement governance mechanisms for contract upgrades
-5. **Oracle Integration**: Use price oracles for multi-currency support
-6. **Gas Optimization**: Optimize storage and computation for lower fees
+### Key Technologies
+- **ink!**: Smart contract development framework
+- **PAPI**: Polkadot API for blockchain interaction
+- **ReactiveDOT**: Reactive state management for Substrate
+- **TypeScript**: Type-safe development
+- **Tailwind CSS**: Utility-first CSS framework
 
-## License
+### Project Highlights
+- **Type-Safe Contract Interaction**: Generated TypeScript bindings from ink! contracts
+- **Real-Time Updates**: Reactive UI that updates with blockchain state
+- **Error Handling**: Comprehensive error handling and user feedback
+- **Mobile Responsive**: Works seamlessly across all devices
+- **Production Ready**: Deployed and tested on Passet Hub testnet
 
-This project is licensed under the MIT License - see the LICENSE file for details.
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push to branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+## 📚 Resources
+
+- [Complete Tutorial](./TUTORIAL.md) - Step-by-step guide to building this dApp
+- [ink! Documentation](https://use.ink/)
+- [PAPI Documentation](https://papi.how/)
+- [ReactiveDOT](https://reactivedot.dev/)
+- [Live Demo](https://inkfundme-tutss.vercel.app)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+**Built with ❤️ using ink!, PAPI, and ReactiveDOT**
