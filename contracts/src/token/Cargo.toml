@@ -1,0 +1,24 @@
+[package]
+name = "token"
+version = "1.0.0"
+authors = ["truthixify"]
+edition = "2024"
+publish = false
+
+[dependencies]
+ink = { git = "https://github.com/use-ink/ink", tag = "v6.0.0-alpha.4", default-features = false }
+
+[dev-dependencies]
+ink_e2e = { git = "https://github.com/use-ink/ink", tag = "v6.0.0-alpha.4" }
+
+[lib]
+path = "lib.rs"
+
+[features]
+default = ["std"]
+std = ["ink/std"]
+ink-as-dependency = []
+e2e-tests = []
+
+[package.metadata.ink-lang]
+abi = "ink"
