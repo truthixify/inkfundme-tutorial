@@ -265,7 +265,7 @@ export default function CampaignPage() {
                 })
 
             toast.promise(approveTx, {
-                loading: "Approving amount...",
+                loading: `Approving ${parsedAmount} $${tokenInfo.symbol} ...`,
                 success: "Successfully approved!",
                 error: (error) => {
                     if (
@@ -329,7 +329,7 @@ export default function CampaignPage() {
                 })
 
             toast.promise(tx, {
-                loading: "Contributing to campaign...",
+                loading: `Contributing ${parsedAmount} $${tokenInfo.symbol} to campaign ...`,
                 success: "Successfully contributed!",
                 error: (error) => {
                     if (
