@@ -7,4 +7,4 @@ export const FAUCET_URLS: { [key: string]: string } = {
 }
 
 export const TOKEN_ADDRESS = "0x1f92b64f3e344dfd020ccd287e39a660ba329262" // Replace with your deployed Token contract address
-export const INK_FUND_ME_ADDRESS = "0xca1b92ff69afe515131c5a4ce8c4066db2f418db" // Replace with your deployed InkFundMe contract address
+export const INK_FUND_ME_ADDRESS = "0xa89c351e2ddd04cdc65aaed75b4dea5f1c0be279" // Replace with your deployed InkFundMe contract address
