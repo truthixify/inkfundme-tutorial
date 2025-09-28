@@ -16,7 +16,9 @@ export function useIsMapped() {
         }
 
         const evmSignerAddress = ss58ToEthereum(signerAddress)
-        const isMapped = !!(await api.query.Revive.OriginalAccount.getValue(evmSignerAddress))
+        const isMapped = !!(await (api.query.Revive as any).OriginalAccount.getValue(
+            evmSignerAddress
+        ))
 
         setIsMapped(isMapped)
     }, [api, signerAddress])

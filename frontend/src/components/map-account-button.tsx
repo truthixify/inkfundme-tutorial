@@ -19,7 +19,8 @@ export function MapAccountButton() {
 
         setIsLoading(true)
 
-        const tx = api.tx.Revive.map_account()
+        const tx = (api.tx.Revive as any)
+            .map_account()
             .signAndSubmit(signer)
             .then((tx: any) => {
                 if (!tx.ok) throw tx.dispatchError

@@ -54,7 +54,6 @@ export default function CampaignPage() {
     const [campaign, setCampaign] = useState<Campaign | null>(null)
     const [tokenInfo, setTokenInfo] = useState<TokenInfo | null>(null)
     const [initialLoading, setInitialLoading] = useState(true)
-    const [isRefreshing, setIsRefreshing] = useState(false)
     const [contributionAmount, setContributionAmount] = useState("")
     const [isContributing, setIsContributing] = useState(false)
     const [isApproving, setIsApproving] = useState(false)
@@ -116,8 +115,6 @@ export default function CampaignPage() {
 
             if (isInitialLoad && !isRefresh) {
                 setInitialLoading(true)
-            } else {
-                setIsRefreshing(true)
             }
 
             try {
@@ -218,8 +215,6 @@ export default function CampaignPage() {
                 if (isInitialLoad && !isRefresh) {
                     setInitialLoading(false)
                     setIsInitialLoad(false)
-                } else {
-                    setIsRefreshing(false)
                 }
             }
         },

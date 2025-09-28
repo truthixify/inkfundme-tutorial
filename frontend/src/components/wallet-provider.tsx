@@ -6,6 +6,7 @@ import { WalletDropdown } from "./wallet-dropdown"
 import { config } from "../lib/config"
 import type { ChainId, WalletAccount } from "../lib/types"
 import { Link } from "react-router-dom"
+import { Button } from "./ui/button-extended"
 
 export function WalletProviders({ children }: { children: ReactNode }) {
     const [account, setAccount] = useState<WalletAccount>()
@@ -24,9 +25,12 @@ export function WalletProviders({ children }: { children: ReactNode }) {
                                 </Link>
                                 <Suspense
                                     fallback={
-                                        <div className="text-center text-sm text-muted-foreground">
-                                            Loading...
-                                        </div>
+                                        <Button
+                                            size="lg"
+                                            variant="outline"
+                                            isLoading
+                                            disabled
+                                        ></Button>
                                     }
                                 >
                                     <WalletDropdown

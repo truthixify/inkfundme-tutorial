@@ -7,4 +7,18 @@
 **/*.log
 **/*.tmp
 **/*.yarn
-.vercel
+**/.vercel
+
+# Contract compilation artifacts
+contracts/target/
+**/.papi/
+**/artifacts/
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+Thumbs.db

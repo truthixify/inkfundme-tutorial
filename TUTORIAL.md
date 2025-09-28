@@ -960,6 +960,15 @@ npm run build
 npm run preview
 ```
 
+**🔧 If you encounter TypeScript errors during build:**
+
+Common issues and fixes:
+- **`'api.tx.Revive.map_account' is of type 'unknown'`**: Add type assertion: `(api.tx.Revive as any).map_account()`
+- **`'api.query.Revive.OriginalAccount' is of type 'unknown'`**: Add type assertion: `(api.query.Revive as any).OriginalAccount`
+- **Unused variable warnings**: Remove unused variables or prefix with underscore: `const [_unusedVar] = useState()`
+
+These are common when working with PAPI and ReactiveDOT as the type system is still evolving.
+
 #### Step 2: Deploy to Vercel
 
 **Option A: Deploy via Vercel CLI (Recommended)**
@@ -967,16 +976,18 @@ npm run preview
 # Install Vercel CLI if you haven't already
 npm install -g vercel
 
-# Deploy from your frontend directory
+# IMPORTANT: Navigate to the frontend directory first!
 cd frontend
 vercel
 
 # Follow the prompts:
 # - Link to existing project? No (for first deployment)
 # - What's your project name? inkfundme-yourname
-# - In which directory is your code located? ./
+# - In which directory is your code located? ./ (just dot slash, since you're already in frontend)
 # - Want to override settings? No
 ```
+
+**⚠️ Common Deployment Issue**: If you get an error like "files should NOT have more than 15000 items", it means you're trying to deploy from the wrong directory. Make sure you're in the `frontend` folder before running `vercel`, not the root project folder!
 
 **Option B: Deploy via Vercel Dashboard**
 1. Push your code to GitHub

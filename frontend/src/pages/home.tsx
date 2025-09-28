@@ -9,6 +9,7 @@ import { token, inkFundMe } from "../lib/contracts"
 import { Button } from "../components/ui/button-extended"
 import { CampaignCard } from "../components/campaign-card"
 import { CreateCampaignForm } from "../components/create-campaign-form"
+import { LoadingScreen } from "../components/ui/loading"
 
 type Campaign = {
     id: number
@@ -29,11 +30,11 @@ type TokenInfo = {
 }
 
 export default function HomePage() {
-    const [queryIsLoading, setQueryIsLoading] = useState(true)
     const [campaigns, setCampaigns] = useState<Campaign[]>([])
     const [campaignCount, setCampaignCount] = useState<number>(0)
     const [tokenInfo, setTokenInfo] = useState<TokenInfo | null>(null)
     const [activeTab, setActiveTab] = useState("browse")
+    const [loading, setLoading] = useState(true)
 
     const api = useTypedApi()
     const chain = useChainId()
@@ -116,20 +117,32 @@ export default function HomePage() {
         }
     }, [api, chain, signerAddress])
 
+    /**
+     * Query both contracts
+     */
+
     const queryContracts = useCallback(async () => {
-        setQueryIsLoading(true)
         try {
+            setLoading(true)
             await Promise.all([queryInkFundMeContract(), queryTokenContract()])
         } catch (error) {
             console.error("Error querying contracts:", error)
         } finally {
-            setQueryIsLoading(false)
+            setLoading(false)
         }
     }, [queryInkFundMeContract, queryTokenContract])
 
     useEffect(() => {
         queryContracts()
     }, [queryContracts])
+
+    useEffect(() => {
+        queryContracts()
+    }, [queryContracts])
+
+    if (loading) {
+        return <LoadingScreen />
+    }
 
     return (
         <div className="mx-auto w-full max-w-7xl space-y-6 px-4 sm:px-6 lg:px-8">
