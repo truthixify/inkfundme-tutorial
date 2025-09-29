@@ -117,10 +117,10 @@ pub struct InkFundMe {
 ```
 
 **Design Decisions**:
-- `U256` for token amounts ensures compatibility and handles large numbers
-- `StorageVec` for gas-efficient campaign storage
-- `Mapping` for constant contribution lookups
-- Separation of concerns between token and crowdfunding logic
+- `U256` for token amounts -> ensures compatibility and handles large numbers
+- `StorageVec` for campaign storage → provides ordered, append-only data with efficient iteration.
+- `Mapping` for contributions -> enables constant-time lookups for campaign data.
+- Clear separation of concerns -> token contract handles ERC-20 logic, crowdfunding contract handles campaign logic.
 
 ### Core Contract Functions
 
