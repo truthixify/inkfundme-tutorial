@@ -28,7 +28,7 @@ A complete decentralized crowdfunding platform built with ink! smart contracts a
 ## 🏗️ Project Structure
 
 ```
-inkfundme/
+-inkfundme-tutorial/
 ├── contracts/                 # ink! Smart Contracts
 │   ├── src/
 │   │   ├── token/            # ERC20 token contract
@@ -202,7 +202,7 @@ The contract includes comprehensive error handling:
 ### 1. Clone and Setup
 ```bash
 git clone https://github.com/truthixify/inkfundme.git
-cd inkfundme
+cd inkfundme-tutorial
 ```
 
 ### 2. Deploy Smart Contracts
@@ -327,7 +327,7 @@ npm run preview  # Test production build locally
 - [ink! Documentation](https://use.ink/)
 - [PAPI Documentation](https://papi.how/)
 - [ReactiveDOT](https://reactivedot.dev/)
-- [Live Demo](https://inkfundme-tutss.vercel.app)
+- [Live Demo](https://inkfundme-tutorial.vercel.app)
 
 ## 📄 License
 
