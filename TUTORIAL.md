@@ -200,7 +200,7 @@ pub fn contribute(&mut self, campaign_id: u32, amount: U256) -> Result<()> {
 
 #### Finalizing Campaigns (The Smart Decision Maker)
 
-Here's where things get interesting! The `finalize` function is like the judge that decides what happens to all the money once a campaign ends. Think of it as the moment of truth, did we reach our goal or not?
+Here's where things get interesting. The `finalize` function is like the judge that decides what happens to all the money once a campaign ends. Think of it as the moment of truth, did we reach our goal or not?
 
 ```rust
 #[ink(message)]
@@ -242,11 +242,11 @@ pub fn finalize(&mut self, campaign_id: u32) -> Result<()> {
 - **Campaign succeeded** (raised ≥ goal): All the money goes straight to the campaign creator. Contributors get nothing back, but they supported a successful project!
 - **Campaign failed** (raised < goal): The money stays locked in the contract, and each contributor can claim their full refund. Nobody loses money on a failed project.
 
-This is the beauty of smart contracts, no human judgment calls, no disputes, just pure math deciding what's fair.
+The smart contracts get to decide how the fund will be distributed.
 
 #### Claiming Refunds (Getting Your Money Back For a Failed Campaign)
 
-When a campaign doesn't reach its goal, contributors shouldn't lose their money. That's where `claim_refund` comes to the rescue! It's like having an automatic insurance policy built into the contract.
+When a campaign doesn't reach its goal, contributors shouldn't lose their money. That's where claim_refund comes to the rescue. It's like we have an automatic insurance policy built into the contract.
 
 ```rust
 #[ink(message)]
@@ -284,21 +284,21 @@ pub fn claim_refund(&mut self, campaign_id: u32) -> Result<()> {
 3. **One refund per person** - Once you claim, your contribution record gets wiped to prevent double-dipping
 4. **Instant transfer** - Your tokens come back immediately, no waiting periods
 
-This creates a win-win situation: creators get funded if they hit their goals, and contributors never lose money on failed projects.
+This creates a win-win situation where creators get funded if they hit their goals, and contributors never lose money on failed projects.
 
 ### Query Functions - Your Window Into the Contract
 
 These are the "read-only" functions that let you peek inside the contract without changing anything. Think of them as your dashboard for checking what's happening:
 
-- **`get_campaign(campaign_id: u32)`** - Want details about a specific campaign? This gives you everything - title, description, goal, how much is raised, deadline, and whether it's completed.
+- **`get_campaign(campaign_id: u32)`** - This gives us everything related to a specific campaign (title, description, goal, how much is raised, deadline, and whether it's completed).
 
-- **`get_all_campaigns()`** - Perfect for building your homepage! This returns every single campaign in the contract, so you can display them all in a nice grid.
+- **`get_all_campaigns()`** - This returns all the campaigns in the contract.
 
-- **`get_contribution(campaign_id: u32, contributor: Address)`** - "How much did Alice contribute to campaign #5?" This function has the answer. Super useful for showing users their contribution history.
+- **`get_contribution(campaign_id: u32, contributor: Address)`** - With this function, we can get how much someone contributed to a particular campaign.
 
-- **`get_token_address()`** - Returns the address of the ERC20/PSP22 token contract. Your frontend needs this to interact with the token (like checking balances or approving transfers).
+- **`get_token_address()`** - Returns the address of the ERC20/PSP22 token contract. The frontend needs this to interact with the token (like checking balances or approving transfers).
 
-- **`get_campaign_count()`** - A simple counter of how many campaigns exist. Great for pagination or showing stats like "Join 1,247 other campaigns!"
+- **`get_campaign_count()`** -This returns a simple counter of how many campaigns exist.
 
 These functions are free to call (no gas costs) and never change the blockchain state, they're just for reading data.
 
@@ -314,7 +314,7 @@ Building a crowdfunding platform means handling real money, so security isn't op
 
 **Event Emission for Transparency**: Every important action emits an event. This creates an immutable audit trail that frontends can use to show real-time updates and users can verify on-chain.
 
-**Owner-Only Functions**: Only campaign creators can finalize their campaigns. This prevents random people from prematurely ending campaigns or stealing funds.
+**Owner-Only Functions**: Only campaign creators can finalize their campaigns. This prevents random people from prematurely ending campaigns.
 
 **Proper State Validation for Refunds**: Multiple layers of checks ensure refunds only happen for failed campaigns, only to actual contributors, and only once per person.
 
@@ -328,7 +328,7 @@ These aren't just theoretical concepts, they're battle-tested patterns that prot
 
 ```bash
 git clone https://github.com/truthixify/inkfundme-tutorial.git
-cd inkfundme
+cd inkfundme-tutorial
 ```
 
 ### 2. Contract Development Setup
@@ -902,6 +902,7 @@ But for now, the testnet deployment is perfect for showcasing your skills and le
 - [ReactiveDOT Documentation](https://reactivedot.dev/)
 - [Substrate Contracts Node](https://github.com/paritytech/substrate-contracts-node)
 - [Source Code Repository](https://github.com/truthixify/inkfundme-tutorial)
+- [Live dApp] (https://inkfundme-tutorial.vercel.app)
 
 ---
 
