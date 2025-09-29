@@ -1,6 +1,6 @@
 # Building a Crowdfunding dApp with ink! Smart Contracts and PAPI/ReactiveDOT
 
-Hey there! Ready to build something awesome? In this tutorial, we'll create a decentralized crowdfunding platform from scratch using ink! smart contracts and a modern React frontend. Think of this as us coding together - I'll walk you through each step, explain the important decisions, and make sure you understand both the how and the why.
+Hey there! Ready to build something awesome? In this tutorial, we'll create a decentralized crowdfunding platform from scratch using ink! smart contracts and a modern React frontend. Think of this as me and you coding together. I'll walk you through each step, explain the important decisions, and make sure you understand both the how and the why.
 
 We'll be working with the InkFundMe smart contract, integrating it with a sleek frontend using PAPI (Polkadot API) and ReactiveDOT. By the end, you'll have a fully functional dApp where users can create campaigns, make contributions, and manage their fundraising goals. You can grab the complete code here: [InkFundMe Repository](https://github.com/truthixify/inkfundme.git).
 
@@ -11,7 +11,7 @@ We'll be working with the InkFundMe smart contract, integrating it with a sleek 
 We're building **InkFundMe**, a crowdfunding dApp that combines the power of ink! smart contracts with a modern React frontend.
 
 Here's what we're working with:
-- **ink! smart contracts**: Two contracts - an ERC20 token and the main crowdfunding logic
+- **ink! smart contracts**: We have two contracts which are an ERC20 token and the main crowdfunding logic
 - **React frontend**: Built with Vite, TypeScript, and Tailwind CSS
 - **PAPI integration**: Using Polkadot API for seamless blockchain interaction
 - **ReactiveDOT**: A reactive library for building Substrate front-ends
@@ -198,9 +198,9 @@ pub fn contribute(&mut self, campaign_id: u32, amount: U256) -> Result<()> {
 }
 ```
 
-#### Finalizing Campaigns - The Smart Decision Maker
+#### Finalizing Campaigns (The Smart Decision Maker)
 
-Here's where things get interesting! The `finalize` function is like the judge that decides what happens to all the money once a campaign ends. Think of it as the moment of truth - did we reach our goal or not?
+Here's where things get interesting! The `finalize` function is like the judge that decides what happens to all the money once a campaign ends. Think of it as the moment of truth, did we reach our goal or not?
 
 ```rust
 #[ink(message)]
@@ -242,9 +242,9 @@ pub fn finalize(&mut self, campaign_id: u32) -> Result<()> {
 - **Campaign succeeded** (raised ≥ goal): All the money goes straight to the campaign creator. Contributors get nothing back, but they supported a successful project!
 - **Campaign failed** (raised < goal): The money stays locked in the contract, and each contributor can claim their full refund. Nobody loses money on a failed project.
 
-This is the beauty of smart contracts - no human judgment calls, no disputes, just pure math deciding what's fair.
+This is the beauty of smart contracts, no human judgment calls, no disputes, just pure math deciding what's fair.
 
-#### Claiming Refunds - Getting Your Money Back
+#### Claiming Refunds (Getting Your Money Back For a Failed Campaign)
 
 When a campaign doesn't reach its goal, contributors shouldn't lose their money. That's where `claim_refund` comes to the rescue! It's like having an automatic insurance policy built into the contract.
 
@@ -300,11 +300,11 @@ These are the "read-only" functions that let you peek inside the contract withou
 
 - **`get_campaign_count()`** - A simple counter of how many campaigns exist. Great for pagination or showing stats like "Join 1,247 other campaigns!"
 
-These functions are free to call (no gas costs) and never change the blockchain state - they're just for reading data.
+These functions are free to call (no gas costs) and never change the blockchain state, they're just for reading data.
 
-### Security Patterns - How We Keep Your Funds Safe
+### Security Patterns (How We Keep Your Funds Safe)
 
-Building a crowdfunding platform means handling real money, so security isn't optional - it's everything. Here are the key security patterns we've baked into the contract to protect everyone involved:
+Building a crowdfunding platform means handling real money, so security isn't optional, it's everything. Here are the key security patterns we've baked into the contract to protect everyone involved:
 
 **Checks-Effects-Interactions Pattern**: We always validate everything first, update our internal state second, and only then interact with external contracts. This prevents sneaky reentrancy attacks where malicious contracts try to drain funds.
 
@@ -318,7 +318,7 @@ Building a crowdfunding platform means handling real money, so security isn't op
 
 **Proper State Validation for Refunds**: Multiple layers of checks ensure refunds only happen for failed campaigns, only to actual contributors, and only once per person.
 
-These aren't just theoretical concepts - they're battle-tested patterns that protect millions of dollars in DeFi protocols every day.
+These aren't just theoretical concepts, they're battle-tested patterns that protect millions of dollars in DeFi protocols every day.
 
 ---
 
@@ -416,12 +416,12 @@ npm install
 Key dependencies:
 - `@polkadot-api/descriptors` - Generated contract descriptors
 - `@polkadot-api/sdk-ink` - ink! contract SDK
-- `@reactive-dot/react` - ReactiveDOT React integration
+- `@reactive-dot/react` - Integrating PAPI into a React application
 - `polkadot-api` - Core Polkadot API
 
 ### 2. Generate Contract Descriptors
 
-This is where the magic happens - we generate TypeScript bindings from our compiled contracts:
+This is where the magic happens, we generate TypeScript bindings from our compiled contracts:
 
 ```bash
 # Add the Passet Hub testnet
@@ -835,13 +835,13 @@ const mintTokens = async (amount: bigint) => {
 
 ## Deployment to Production
 
-### 1. Make It Yours - Customize the UI
+### 1. Make It Yours (Customize the UI)
 
 Before deploying, this is your chance to make the dApp truly yours! The current UI is functional, but you can make it shine:
 
 **Styling Tweaks You Can Make:**
 - Update colors in `tailwind.config.js` to match your brand
-- Modify the campaign cards in `frontend/src/components/campaign-card.tsx` - maybe add images or different layouts
+- Modify the campaign cards in `frontend/src/components/campaign-card.tsx`, maybe add images or different layouts
 - Customize the create campaign form styling in `frontend/src/components/create-campaign-form.tsx`
 - Add your own logo and branding to the header
 - Change fonts, spacing, or add animations to make it more engaging
@@ -856,7 +856,7 @@ Before deploying, this is your chance to make the dApp truly yours! The current 
 
 Take some time to browse through the components and make them reflect your vision. The beauty of having the full source code is that you can customize everything!
 
-### 2. Deploy to Vercel - Share Your Creation
+### 2. Deploy to Vercel (Share Your Creation)
 
 Once you're happy with your customizations, let's get your dApp live for the world to see:
 
@@ -998,5 +998,3 @@ Congratulations! You've built a complete decentralized crowdfunding platform usi
 - Deploy and test dApps
 
 This is just the beginning. The patterns and techniques you've learned here can be applied to build all kinds of decentralized applications. Keep experimenting, keep building, and most importantly, keep learning!
-
-The future of decentralized applications is bright, and you're now equipped to be part of it. Happy coding! 🚀
