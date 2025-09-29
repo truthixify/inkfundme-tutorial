@@ -2,7 +2,7 @@
 
 Hey there! Ready to build something awesome? In this tutorial, we'll create a decentralized crowdfunding platform from scratch using ink! smart contracts and a modern React frontend. Think of this as me and you coding together. I'll walk you through each step, explain the important decisions, and make sure you understand both the how and the why.
 
-We'll be working with the InkFundMe smart contract, integrating it with a sleek frontend using PAPI (Polkadot API) and ReactiveDOT. By the end, you'll have a fully functional dApp where users can create campaigns, make contributions, and manage their fundraising goals. You can grab the complete code here: [InkFundMe Repository](https://github.com/truthixify/inkfundme.git).
+We'll be working with the InkFundMe smart contract, integrating it with a sleek frontend using PAPI (Polkadot API) and ReactiveDOT. By the end, you'll have a fully functional dApp where users can create campaigns, make contributions, and manage their fundraising goals. You can grab the complete code here: [InkFundMe Repository](https://github.com/truthixify/inkfundme-tutorial.git).
 
 ---
 
@@ -11,12 +11,12 @@ We'll be working with the InkFundMe smart contract, integrating it with a sleek 
 We're building **InkFundMe**, a crowdfunding dApp that combines the power of ink! smart contracts with a modern React frontend.
 
 Here's what we're working with:
-- **ink! smart contracts**: We have two contracts which are an ERC20 token and the main crowdfunding logic
+- **ink! smart contracts**: We have two contracts which are an ERC20/PSP22 token and the main crowdfunding logic
 - **React frontend**: Built with Vite, TypeScript, and Tailwind CSS
 - **PAPI integration**: Using Polkadot API for seamless blockchain interaction
 - **ReactiveDOT**: A reactive library for building Substrate front-ends
 
-The flow is simple: users create campaigns with funding goals and deadlines, contributors can donate using our custom ERC20 tokens, and the smart contract handles all the logic for successful funding or refunds.
+The flow is simple: users create campaigns with funding goals and deadlines, contributors can donate using our custom ERC20/PSP22 tokens, and the smart contract handles all the logic for successful funding or refunds.
 
 ---
 
@@ -32,7 +32,7 @@ Before we dive in, make sure you have these tools ready:
 - **Polkadot.js extension** – [Browser extension](https://polkadot.js.org/extension/)
 - **Git** – [Install Git](https://git-scm.com/)
 
-If you're missing any of these, install them before continuing. The ink! documentation has great setup guides.
+If you're missing any of these, install them before continuing. The [ink!](https://use.ink/docs/v6/) documentation has great setup guides.
 
 ---
 
@@ -45,7 +45,7 @@ The smart contracts are located in the `contracts/` directory:
 ```
 contracts/
 ├── src/
-│   ├── token/           # ERC20 token contract
+│   ├── token/           # ERC20/PSP22 token contract
 │   │   ├── lib.rs       # Token implementation
 │   │   └── Cargo.toml   # Token dependencies
 │   └── inkfundme/       # Main crowdfunding contract
@@ -64,7 +64,7 @@ contracts/
 
 Our system uses two smart contracts working together:
 
-1. **Token Contract** (`contracts/src/token/lib.rs`): A custom ERC20 token with minting capabilities
+1. **Token Contract** (`contracts/src/token/lib.rs`): A custom ERC20/PSP22 token with minting capabilities
 2. **InkFundMe Contract** (`contracts/src/inkfundme/lib.rs`): The main crowdfunding logic
 
 ### Token Contract Features
@@ -85,7 +85,7 @@ pub struct Token {
 ```
 
 **Key Functions**:
-- Standard ERC20 operations: `transfer`, `transfer_from`, `approve`, `allowance`
+- Standard ERC20/PSP22 operations: `transfer`, `transfer_from`, `approve`, `allowance`
 - **Minting capability**: `mint` function for creating new tokens
 - **Faucet functionality**: Free tokens for testing and onboarding
 
@@ -109,7 +109,7 @@ pub struct Campaign {
 
 #[ink(storage)]
 pub struct InkFundMe {
-    token_contract: TokenRef,                    // ERC20 token reference
+    token_contract: TokenRef,                    // ERC20/PSP22 token reference
     campaigns: StorageVec<Campaign>,             // All campaigns
     contributions: Mapping<(u32, Address), U256>, // Contribution tracking
     next_campaign_id: u32,                       // ID counter
@@ -279,7 +279,7 @@ pub fn claim_refund(&mut self, campaign_id: u32) -> Result<()> {
 
 **The refund process is bulletproof:**
 
-1. **Double-check the campaign failed** - No refunds for successful campaigns (that would be stealing from the creator!)
+1. **Double-check the campaign failed** - No refunds for successful campaigns (that would be taking contributions from the creator!)
 2. **Verify you actually contributed** - Can't claim money you never put in
 3. **One refund per person** - Once you claim, your contribution record gets wiped to prevent double-dipping
 4. **Instant transfer** - Your tokens come back immediately, no waiting periods
@@ -296,7 +296,7 @@ These are the "read-only" functions that let you peek inside the contract withou
 
 - **`get_contribution(campaign_id: u32, contributor: Address)`** - "How much did Alice contribute to campaign #5?" This function has the answer. Super useful for showing users their contribution history.
 
-- **`get_token_address()`** - Returns the address of the ERC20 token contract. Your frontend needs this to interact with the token (like checking balances or approving transfers).
+- **`get_token_address()`** - Returns the address of the ERC20/PSP22 token contract. Your frontend needs this to interact with the token (like checking balances or approving transfers).
 
 - **`get_campaign_count()`** - A simple counter of how many campaigns exist. Great for pagination or showing stats like "Join 1,247 other campaigns!"
 
@@ -327,7 +327,7 @@ These aren't just theoretical concepts, they're battle-tested patterns that prot
 ### 1. Clone and Setup
 
 ```bash
-git clone https://github.com/truthixify/inkfundme.git
+git clone https://github.com/truthixify/inkfundme-tutorial.git
 cd inkfundme
 ```
 
@@ -523,49 +523,10 @@ createRoot(document.getElementById("root")!).render(
 
 The project includes several custom hooks for seamless contract interactions. Here are the key ones:
 
-**Account Mapping Hook (`use-is-mapped.tsx`):**
-```typescript
-export function useIsMapped() {
-    const api = useTypedApi()
-    const { signerAddress } = useSignerAndAddress()
-    const [isMapped, setIsMapped] = useState<boolean>()
+- **Account Mapping Hook (`use-is-mapped.tsx`)**
+- **Signer Hook (`use-signer-and-address.tsx`)**
 
-    const updateIsMapped = useCallback(async () => {
-        if (!api || !signerAddress) {
-            setIsMapped(undefined)
-            return
-        }
-
-        const evmSignerAddress = ss58ToEthereum(signerAddress)
-        const isMapped = !!(await (api.query.Revive as any).OriginalAccount.getValue(
-            evmSignerAddress
-        ))
-        setIsMapped(isMapped)
-    }, [api, signerAddress])
-
-    return isMapped
-}
-```
-
-**Signer Hook (`use-signer-and-address.tsx`):**
-```typescript
-export function useSignerAndAddress() {
-    const signer = useSigner()
-    if (!signer?.publicKey) return {}
-
-    let signerAddress: string | undefined
-    try {
-        signerAddress = AccountId().dec(signer.publicKey)
-    } catch (error) {
-        console.error(error)
-        return {}
-    }
-
-    return { signer, signerAddress }
-}
-```
-
-> **Note**: These hooks handle the complex logic of wallet connection, address conversion, and account mapping status. Check the full implementations in `frontend/src/hooks/` for complete error handling and state management.
+> **Note**: These hooks handle the complex logic of wallet connection, address conversion, and account mapping status. Check the implementations in `frontend/src/hooks/`.
 
 ### 3. Campaign Card Component
 
@@ -632,19 +593,18 @@ export function CampaignCard({ campaign, tokenInfo }: {
 
 The project includes several advanced features that make it production-ready:
 
-**🎯 Smart Contract Integration:**
+**Smart Contract Integration:**
 - **Token Faucet**: Users can mint free test tokens directly from the dApp
-- **Approval System**: Automatic token approval handling for contributions
 - **Account Mapping**: Seamless SS58 to EVM address mapping
 - **Real-time Updates**: Live campaign data refreshing after transactions
 
-**💡 User Experience Enhancements:**
+**User Experience Enhancements:**
 - **Loading States**: Comprehensive loading indicators for all operations
 - **Error Handling**: User-friendly error messages with transaction cancellation support
 - **Toast Notifications**: Real-time feedback for all user actions
 - **Responsive Design**: Works perfectly on desktop and mobile devices
 
-**🔧 Developer-Friendly Features:**
+**Developer-Friendly Features:**
 - **TypeScript Integration**: Full type safety with generated contract types
 - **Modular Components**: Reusable UI components with shadcn/ui
 - **Custom Hooks**: Clean separation of blockchain logic from UI components
@@ -681,22 +641,6 @@ Before diving into contract interactions, there's an important step you need to 
 #### What is Account Mapping?
 
 Think of account mapping as registering your Substrate address (SS58 format) with the contract runtime so it can interact with EVM-style contracts. It's like getting a passport to enter a different country, you need it stamped before you can do business there.
-
-```typescript
-import { ss58ToEthereum } from '@polkadot-api/sdk-ink'
-
-// Convert SS58 address to Ethereum format for contract calls
-const evmAddress = ss58ToEthereum(ss58Address)
-
-// Check if an address is already mapped
-const sdk = createReviveSdk(api, inkFundMe.contract)
-const isMapped = await sdk.addressIsMapped(signerAddress)
-
-if (!isMapped) {
-    console.log("Account needs to be mapped first!")
-    // User needs to call the map_account transaction
-}
-```
 
 #### The Mapping Process
 
@@ -754,10 +698,10 @@ try {
     const result = await contract.send('function_name', { ... })
     // Handle success
 } catch (error) {
-    if (error.message.includes('DeadlineReached')) {
-        // Handle specific contract error
+    if (error.message.includes('Cancelled')) {
+        // Handle user canceled error
     } else {
-        // Handle general error
+        // Handle other errors
     }
 }
 ```
@@ -772,7 +716,7 @@ For Passet Hub testnet development:
 
 1. Get testnet tokens from the [faucet](https://faucet.polkadot.io/?parachain=1111)
 2. Update your `.env` with testnet configuration
-3. Deploy contracts to testnet using the `make instantiate-` commands
+3. Deploy contracts to testnet using the `make instantiate-*` commands
 4. Update frontend constants with deployed addresses
 
 Start the frontend:
@@ -783,25 +727,7 @@ npm run dev
 
 ### 2. Testing Contract Functions
 
-Use the faucet function to get test tokens:
-
-```typescript
-// Get free tokens for testing
-const mintTokens = async (amount: bigint) => {
-    const sdk = createInkSdk(api, token.contract)
-    const contract = sdk.getContract(TOKEN_ADDRESS)
-    
-    const tx = contract.send('mint_faucet', {
-        origin: signerAddress,
-        data: {
-            to: signerAddress,
-            amount: [amount, 0n, 0n, 0n]
-        }
-    })
-    
-    return await tx.signAndSubmit(signer)
-}
-```
+Use the faucet button on each campaign page to mint tokens
 
 ---
 
@@ -818,6 +744,7 @@ const mintTokens = async (amount: bigint) => {
 - Implement milestone-based funding
 - Add campaign update functionality
 - Create governance mechanisms for dispute resolution
+- Use assets on Asset Hub instead of custom ERC20/PSP22 tokens
 
 ### 3. Integration Enhancements
 - Add IPFS integration for campaign media
@@ -871,21 +798,12 @@ npm run build
 npm run preview
 ```
 
-**🔧 If you encounter TypeScript errors during build:**
-
-The project has been updated to handle common TypeScript issues:
-
-- **Revive API calls**: Now properly typed with `(api.tx.Revive as any)` and `(api.query.Revive as any)`
-- **Unused variables**: Cleaned up to remove build warnings
-- **Contract interactions**: All contract calls include proper error handling and loading states
-- **Toast notifications**: Comprehensive user feedback for all operations
+**If you encounter TypeScript errors during build:**
 
 If you still encounter issues:
 - Make sure you've run `npm run codegen` after building contracts
 - Check that your contract addresses in `constants.ts` are correct
 - Verify your `.papi/` directory contains the generated descriptors
-
-The codebase now includes production-ready error handling and user experience improvements!
 
 #### Step 2: Deploy to Vercel
 
@@ -924,7 +842,7 @@ If you have any environment variables (like API keys), add them in your Vercel d
 
 #### Step 4: Custom Domain (Optional)
 
-Want a custom domain like `mycrowdfunding.com`?
+Want a custom domain like `onchaincrowdfunding.com`?
 - Go to your Vercel project settings
 - Click "Domains"
 - Add your custom domain and follow the DNS setup instructions
@@ -983,7 +901,7 @@ But for now, the testnet deployment is perfect for showcasing your skills and le
 - [Polkadot API (PAPI) Documentation](https://papi.how/)
 - [ReactiveDOT Documentation](https://reactivedot.dev/)
 - [Substrate Contracts Node](https://github.com/paritytech/substrate-contracts-node)
-- [Source Code Repository](https://github.com/truthixify/inkfundme)
+- [Source Code Repository](https://github.com/truthixify/inkfundme-tutorial)
 
 ---
 
